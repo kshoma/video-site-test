@@ -1,0 +1,21 @@
+{
+  "name": "VideoShare検証版",
+  "short_name": "VideoTest",
+  "description": "健全な動画共有プラットフォーム検証版",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2196F3",
+  "icons": [
+    {
+      "src": "https://via.placeholder.com/192x192/2196F3/ffffff?text=V",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://via.placeholder.com/512x512/2196F3/ffffff?text=V",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
