@@ -393,7 +393,7 @@
             flex-shrink: 0;
         }
 
-        /* 動画プレイヤー - 改善版 */
+        /* 動画プレイヤー - 修正版 */
         .video-player {
             position: fixed;
             top: 50%;
@@ -401,18 +401,21 @@
             transform: translate(-50%, -50%);
             width: 90vw;
             max-width: 900px;
+            max-height: 80vh;
             background: #000;
             border-radius: 16px;
             overflow: hidden;
             display: none;
-            z-index: 1001; /* ヘッダーより下、オーバーレイより上 */
+            z-index: 1001;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
         }
 
         .video-player video {
             width: 100%;
-            height: auto;
-            max-height: 70vh;
+            height: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+            display: block;
         }
 
         .video-overlay {
@@ -423,7 +426,7 @@
             height: 100%;
             background: rgba(0, 0, 0, 0.8);
             display: none;
-            z-index: 1000; /* ヘッダーより下に設定 */
+            z-index: 1000;
         }
 
         .close-player {
@@ -441,7 +444,7 @@
             justify-content: center;
             font-size: 18px;
             color: #333;
-            z-index: 1002; /* ヘッダーと同じレベル */
+            z-index: 1002;
             transition: var(--transition-smooth);
         }
 
@@ -449,8 +452,6 @@
             background: white;
             transform: scale(1.1);
         }
-
-
 
         /* 読み込み状態 - 改善版 */
         .loading {
@@ -649,6 +650,28 @@
         // 動画ファイルの自動検出システム
         const videos = {};
         
+        // サンプル動画データ（実際の動画ファイルが無い場合のデモ用）
+        const demoVideos = [
+            { 
+                id: 'demo1', 
+                title: 'デモ動画1 - 美しい風景',
+                uploadDate: '2025.08.11',
+                duration: '2:30'
+            },
+            { 
+                id: 'demo2', 
+                title: 'デモ動画2 - 楽しい時間',
+                uploadDate: '2025.08.10',
+                duration: '3:15'
+            },
+            { 
+                id: 'demo3', 
+                title: 'デモ動画3 - 素敵な瞬間',
+                uploadDate: '2025.08.09',
+                duration: '1:45'
+            }
+        ];
+        
         // 動画ファイルリストの自動生成
         async function loadVideos() {
             // 手動で追加された動画リスト
@@ -683,6 +706,13 @@
                 } catch (error) {
                     console.log(`動画ファイル ${video.src} の読み込みに失敗: ${error.message}`);
                 }
+            }
+            
+            // 実際の動画が見つからない場合はデモ動画を表示
+            if (Object.keys(videos).length === 0) {
+                demoVideos.forEach(video => {
+                    videos[video.id] = video;
+                });
             }
             
             updateVideoDisplay();
@@ -753,12 +783,22 @@
             item.setAttribute('role', 'button');
             item.setAttribute('aria-label', `動画を再生: ${video.title}`);
             
+            // サムネイル用のCanvas要素を生成
+            const thumbnailContent = video.src ? 
+                `<video muted preload="metadata" aria-hidden="true">
+                    <source src="${video.src}" type="video/mp4">
+                </video>` : 
+                `<div class="demo-thumbnail">
+                    <div class="demo-thumbnail-content">
+                        <div class="demo-play-icon">▶</div>
+                        <div class="demo-title">${video.title}</div>
+                    </div>
+                </div>`;
+            
             item.innerHTML = `
                 <div class="video-thumbnail">
-                    <video muted preload="metadata" aria-hidden="true">
-                        <source src="${video.src}" type="video/mp4">
-                    </video>
-                    <div class="thumbnail-placeholder">
+                    ${thumbnailContent}
+                    <div class="thumbnail-placeholder" style="${video.src ? '' : 'display: none;'}">
                         <div>動画サムネイル<br><small>クリックで再生</small></div>
                     </div>
                     <div class="play-overlay">
@@ -773,235 +813,9 @@
                         </div>
                         <span class="meta-separator">|</span>
                         <div class="video-meta-item">
-                            <span id="duration-${videoId}">読み込み中...</span>
+                            <span id="duration-${videoId}">${video.duration || '読み込み中...'}</span>
                         </div>
                     </div>
                     <button class="view-button" aria-label="動画を再生">
                         <svg class="view-button-icon" viewBox="0 0 13 12" fill="currentColor" aria-hidden="true">
-                            <path d="M9.68465 4.70931L4.86227 1.8197C3.85586 1.21666 2.57617 1.94169 2.57617 3.11498V8.89419C2.57617 10.0675 3.85586 10.7925 4.86227 10.1895L9.68465 7.29986C10.6632 6.71345 10.6632 5.2956 9.68465 4.70931Z"/>
-                        </svg>
-                        View
-                    </button>
-                </div>
-            `;
-            
-            // イベントリスナー
-            const playVideo = () => handleVideoPlay(videoId);
-            item.addEventListener('click', playVideo);
-            item.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    playVideo();
-                }
-            });
-            
-            const viewButton = item.querySelector('.view-button');
-            viewButton.addEventListener('click', (e) => {
-                e.stopPropagation();
-                playVideo();
-            });
-            
-            // 動画メタデータの読み込み
-            const videoElement = item.querySelector('video');
-            const placeholder = item.querySelector('.thumbnail-placeholder');
-            
-            videoElement.addEventListener('loadedmetadata', function() {
-                const duration = Math.floor(this.duration);
-                const minutes = Math.floor(duration / 60);
-                const seconds = duration % 60;
-                const durationText = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-                
-                const durationElement = document.getElementById(`duration-${videoId}`);
-                if (durationElement) {
-                    durationElement.textContent = durationText;
-                }
-                
-                // サムネイル表示
-                placeholder.style.display = 'none';
-                this.style.display = 'block';
-            });
-            
-            videoElement.addEventListener('error', function() {
-                const durationElement = document.getElementById(`duration-${videoId}`);
-                if (durationElement) {
-                    durationElement.textContent = '再生時間不明';
-                }
-                placeholder.innerHTML = '<div>サムネイル<br><small>生成中...</small></div>';
-            });
-            
-            return item;
-        }
-
-        // 広告システム（確率ベース）
-        const adProbability = 0.7;
-        let currentVideoId = '';
-
-        const adSites = [
-            'https://www.amazon.co.jp/',
-            'https://www.rakuten.co.jp/',
-            'https://shopping.yahoo.co.jp/',
-            'https://www.dmm.com/',
-            'https://www.bookoff.co.jp/',
-        ];
-
-        function handleVideoPlay(videoId) {
-            currentVideoId = videoId;
-            
-            // 確率で広告表示を決定
-            if (Math.random() < adProbability) {
-                showAdPage();
-            } else {
-                playVideoDirectly();
-            }
-            
-            // アナリティクス追跡
-            trackVideoClick(videoId);
-        }
-
-        function showAdPage() {
-            const randomAdSite = adSites[Math.floor(Math.random() * adSites.length)];
-            window.open(randomAdSite, '_blank', 'noopener,noreferrer');
-            
-            setTimeout(() => {
-                playVideoDirectly();
-            }, 1000);
-        }
-
-        function playVideoDirectly() {
-            const player = document.getElementById('videoPlayer');
-            const overlay = document.getElementById('videoOverlay');
-            const video = document.getElementById('mainVideo');
-            const header = document.querySelector('.header');
-            const videoData = videos[currentVideoId];
-            
-            if (videoData) {
-                video.src = videoData.src;
-                overlay.style.display = 'block';
-                player.style.display = 'block';
-                
-                // ヘッダーを動画再生モードに変更
-                header.classList.add('video-playing');
-                
-                // エラーハンドリング
-                video.onerror = function() {
-                    console.error('動画の読み込みに失敗しました');
-                    closeVideoPlayer();
-                };
-                
-                // 動画再生
-                video.play().catch(error => {
-                    console.log('動画の自動再生がブロックされました:', error);
-                });
-                
-                // ESCキーで閉じる
-                document.addEventListener('keydown', handleEscKey);
-            }
-        }
-
-        function closeVideoPlayer() {
-            const player = document.getElementById('videoPlayer');
-            const overlay = document.getElementById('videoOverlay');
-            const video = document.getElementById('mainVideo');
-            const header = document.querySelector('.header');
-            
-            player.style.display = 'none';
-            overlay.style.display = 'none';
-            video.pause();
-            video.src = '';
-            
-            // ヘッダーを通常モードに戻す
-            header.classList.remove('video-playing');
-            
-            document.removeEventListener('keydown', handleEscKey);
-        }
-
-        function handleEscKey(e) {
-            if (e.key === 'Escape') {
-                closeVideoPlayer();
-            }
-        }
-
-        function trackVideoClick(videoId) {
-            // Google Analytics等でのトラッキング
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'video_click', {
-                    'event_category': 'engagement',
-                    'event_label': videoId,
-                    'value': 1
-                });
-            }
-            
-            // Discord参加ボタンのトラッキング
-            const discordButton = document.querySelector('.discord-button');
-            discordButton.addEventListener('click', function() {
-                if (typeof gtag !== 'undefined') {
-                    gtag('event', 'discord_click', {
-                        'event_category': 'community',
-                        'event_label': 'header_button'
-                    });
-                }
-            });
-            
-            console.log(`動画クリック: ${videoId}`);
-        }
-
-        // イベントリスナーの設定
-        document.addEventListener('DOMContentLoaded', function() {
-            loadVideos();
-            
-            // 動画プレイヤーの閉じるボタン
-            document.getElementById('closePlayer').addEventListener('click', closeVideoPlayer);
-            
-            // オーバーレイクリックで閉じる
-            document.getElementById('videoOverlay').addEventListener('click', closeVideoPlayer);
-            
-            // プレイヤークリックでの閉じるを防ぐ
-            document.getElementById('videoPlayer').addEventListener('click', function(e) {
-                e.stopPropagation();
-            });
-            
-            console.log('素人自撮り動画サイトが読み込まれました');
-        });
-
-        // パフォーマンス最適化
-        let ticking = false;
-
-        function optimizeScrollPerformance() {
-            if (!ticking) {
-                requestAnimationFrame(function() {
-                    // スクロール時の処理
-                    ticking = false;
-                });
-                ticking = true;
-            }
-        }
-
-        window.addEventListener('scroll', optimizeScrollPerformance, { passive: true });
-
-        // Intersection Observer for lazy loading
-        const imageObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const video = entry.target;
-                    // 動画のプリロード開始
-                    if (video.tagName === 'VIDEO') {
-                        video.load();
-                    }
-                    observer.unobserve(video);
-                }
-            });
-        });
-
-        // 動画要素にIntersection Observerを適用
-        function observeVideos() {
-            const videos = document.querySelectorAll('.video-thumbnail video');
-            videos.forEach(video => {
-                imageObserver.observe(video);
-            });
-        }
-
-        // ページロード後に実行
-        setTimeout(observeVideos, 1000);
-    </script>
-</body>
-</html>
+                            <path d="M9.68465 4.70931L4.86227 1.8197C3.85586 1.21666 2.57617 1.94169
