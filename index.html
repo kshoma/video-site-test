@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VideoShare検証版</title>
+    <title>素人自撮り - 動画共有サイト</title>
     <link rel="icon" href="favicon.ico">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2196F3">
-    <meta name="description" content="健全で楽しい動画共有プラットフォーム検証版">
+    <meta name="description" content="健全で楽しい動画共有プラットフォーム">
     
     <style>
         * {
@@ -17,19 +17,21 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f5f5f5;
-            color: #333;
+            font-family: 'PingFang SC', 'Hiragino Sans', 'ヒラギノ角ゴシック', 'Meiryo', sans-serif;
+            background-color: #F9F9FA;
+            color: #314158;
+            line-height: 1.6;
         }
 
-        /* ヘッダー */
+        /* ヘッダー - 添付サイトスタイル */
         .header {
             background-color: #fff;
             height: 60px;
-            padding: 0 20px;
+            padding: 0 40px;
             display: flex;
             align-items: center;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-bottom: 1px solid #e5e5e5;
         }
 
         .logo {
@@ -40,21 +42,24 @@
         }
 
         .discord-button {
-            background: #5865F2;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
+            background: linear-gradient(#bddaff, #fff 36%);
+            color: #1e2226;
+            padding: 12px 24px;
+            border-radius: 24px;
             text-decoration: none;
             display: flex;
             align-items: center;
             gap: 8px;
             font-weight: 500;
-            transition: background 0.3s;
+            transition: all 0.3s;
             margin-left: auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #e5e5e5;
         }
 
         .discord-button:hover {
-            background: #4752C4;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         .discord-icon {
@@ -62,117 +67,185 @@
             height: 20px;
         }
 
-        .search-bar {
-            margin-left: 40px;
-            flex: 1;
-            max-width: 500px;
-        }
-
-        .search-bar input {
-            width: 100%;
-            padding: 10px 15px;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            font-size: 14px;
-        }
-
-        /* メインコンテンツ */
+        /* メインコンテナ - 添付サイトレイアウト */
         .main-container {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 24px;
+            background: white;
+            border-radius: 8px;
+            margin-top: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
+        /* パンくずリスト - 添付サイトスタイル */
         .breadcrumb {
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             font-size: 14px;
-            color: #666;
+            color: #595C5F;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .breadcrumb a {
-            color: #2196F3;
+            color: #595C5F;
             text-decoration: none;
         }
 
-        /* フィルター */
-        .filters {
+        .breadcrumb .separator {
+            color: #DBDBDB;
+        }
+
+        .breadcrumb .active {
+            color: #1e2226;
+            font-weight: 600;
+        }
+
+        /* 忍者広告 */
+        .ninja-ad {
+            margin: 20px 0;
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        /* 動画リスト - 添付サイトスタイル */
+        .video-list {
             display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            align-items: center;
+            flex-direction: column;
+            gap: 0;
         }
 
-        .filter-select {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background: white;
+        .video-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid #DBDBDB;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 8px;
+            margin-bottom: 4px;
         }
 
-        /* 動画グリッド */
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+        .video-item:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding-left: 8px;
+            padding-right: 8px;
         }
 
-        .video-card {
-            background: white;
+        .video-item:last-child {
+            border-bottom: none;
+        }
+
+        /* サムネイル - クリック促進デザイン */
+        .video-thumbnail {
+            width: 141px;
+            height: 80px;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .video-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .video-thumbnail {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-            background-color: #e0e0e0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             position: relative;
+            flex-shrink: 0;
+            background: #000;
             cursor: pointer;
         }
 
-        .play-button {
+        .video-thumbnail video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-thumbnail .placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        /* 再生ボタン - 目立つデザイン */
+        .play-overlay {
             position: absolute;
-            width: 50px;
-            height: 50px;
-            background: rgba(0,0,0,0.7);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .video-thumbnail:hover .play-overlay {
+            opacity: 1;
+        }
+
+        .play-button {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.9);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
+            color: #333;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            transform: scale(1);
+            transition: transform 0.2s;
         }
 
+        .play-button:hover {
+            transform: scale(1.1);
+        }
+
+        /* 動画情報 */
         .video-info {
-            padding: 15px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-width: 0;
         }
 
         .video-title {
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 500;
+            line-height: 1.4;
             margin-bottom: 8px;
-            line-height: 1.3;
+            color: #1e2226;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
         }
 
         .video-meta {
             display: flex;
-            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
             font-size: 12px;
-            color: #666;
-            margin-bottom: 10px;
+            color: #77787F;
+            margin-bottom: 12px;
         }
 
+        .video-meta .separator {
+            color: #DBDBDB;
+        }
+
+        /* Viewボタン - 添付サイトスタイル */
         .view-button {
             background: #2196F3;
             color: white;
@@ -180,23 +253,39 @@
             padding: 8px 16px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 14px;
-            transition: background 0.3s;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s;
+            width: 68px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            align-self: flex-start;
         }
 
         .view-button:hover {
             background: #1976D2;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(33,150,243,0.3);
+        }
+
+        .view-button-icon {
+            width: 12px;
+            height: 12px;
         }
 
         /* 動画プレイヤー */
         .video-player {
             width: 100%;
             max-width: 800px;
-            margin: 20px auto;
+            margin: 24px auto;
             background: #000;
             border-radius: 8px;
             overflow: hidden;
             display: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
         
         .video-player video {
@@ -204,127 +293,142 @@
             height: auto;
         }
 
-        /* 忍者広告 */
-        .ninja-ad {
-            margin: 20px 0;
-            text-align: center;
-            padding: 10px;
-            background: #f5f5f5;
-            border-radius: 8px;
-            border: 1px dashed #ccc;
-            color: #999;
-        }
-
-        /* 広告オーバーレイ */
-        .ad-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 10000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .ad-content {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            max-width: 500px;
-            width: 90%;
-            position: relative;
-        }
-
-        .ad-close {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #999;
-        }
-
-        .ad-close:hover {
-            color: #333;
-        }
-
-        .ad-timer {
-            background: #f44336;
+        /* コミュニティ参加促進バナー - 添付サイト風 */
+        .community-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 5px 10px;
-            border-radius: 15px;
-            margin-bottom: 15px;
-            display: inline-block;
-            font-size: 12px;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 24px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .community-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .community-banner h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .community-banner p {
+            font-size: 14px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
         }
 
         /* レスポンシブ */
         @media (max-width: 768px) {
+            .header {
+                padding: 0 16px;
+            }
+
             .main-container {
-                padding: 10px;
+                margin: 16px;
+                padding: 16px;
             }
 
-            .video-grid {
-                grid-template-columns: 1fr;
+            .video-item {
+                flex-direction: column;
+                gap: 12px;
             }
 
-            .search-bar {
-                margin-left: 20px;
-            }
-
-            .discord-button {
-                padding: 8px 12px;
-                font-size: 14px;
+            .video-thumbnail {
+                width: 100%;
+                height: 180px;
             }
 
             .discord-button span {
                 display: none;
             }
 
-            .filters {
-                flex-wrap: wrap;
-                justify-content: center;
+            .discord-button {
+                padding: 8px 12px;
+                border-radius: 20px;
             }
         }
 
         @media (max-width: 480px) {
-            .header {
-                padding: 0 10px;
+            .video-thumbnail {
+                height: 160px;
             }
             
-            .search-bar {
-                margin-left: 10px;
-                margin-right: 10px;
+            .video-title {
+                font-size: 15px;
             }
+        }
+
+        /* 読み込み中アニメーション */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #2196F3;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* パフォーマンス向上 */
+        .video-item {
+            will-change: transform;
+        }
+
+        .video-thumbnail {
+            will-change: transform;
         }
     </style>
 </head>
 <body>
     <!-- ヘッダー -->
     <header class="header">
-        <a href="#" class="logo">VideoShare検証版</a>
-        <div class="search-bar">
-            <input type="search" placeholder="動画を検索...">
-        </div>
+        <a href="#" class="logo">素人自撮り</a>
         <a href="https://discord.gg/your-invite-code" class="discord-button" target="_blank">
             <svg class="discord-icon" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
             </svg>
-            <span>検証コミュニティ参加</span>
+            <span>グループに入る</span>
         </a>
     </header>
 
     <!-- メインコンテンツ -->
-    <main class="main-container">
-        <!-- パンくずリスト -->
+    <div class="main-container">
+        <!-- パンくずリスト - 添付サイトスタイル -->
         <div class="breadcrumb">
-            <a href="#">ホーム</a> / <a href="#">検証動画</a> / テスト動画一覧
+            <span>素人自撮り</span>
+            <span class="separator">/</span>
+            <span class="active">素人自撮り シーズン1</span>
         </div>
 
         <!-- 忍者広告（ヘッダー下） -->
@@ -334,39 +438,15 @@
             <!-- admax -->
         </div>
 
-        <!-- フィルター -->
-        <div class="filters">
-            <label>並び替え:</label>
-            <select class="filter-select">
-                <option>新着順</option>
-                <option>人気順</option>
-                <option>再生時間順</option>
-            </select>
-            
-            <label>期間:</label>
-            <select class="filter-select">
-                <option>すべて</option>
-                <option>今日</option>
-                <option>今週</option>
-                <option>今月</option>
-            </select>
+        <!-- 動画リスト -->
+        <div class="video-list" id="videoList">
+            <div class="loading">動画を読み込んでいます...</div>
         </div>
 
-        <!-- 動画グリッド -->
-        <div class="video-grid">
-            <!-- 動画は JavaScript で動的に読み込まれます -->
-            <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">
-                <h3>動画を読み込んでいます...</h3>
-                <p>しばらくお待ちください</p>
-            </div>
-        </div>
-
-        <!-- 動画プレイヤー -->
-        <div class="video-player" id="videoPlayer">
-            <video controls id="mainVideo">
-                <source src="" type="video/mp4">
-                お使いのブラウザは動画再生に対応していません。
-            </video>
+        <!-- コミュニティ参加促進 -->
+        <div class="community-banner">
+            <h3>コミュニティに参加しませんか？</h3>
+            <p>最新の動画情報や限定コンテンツをいち早くお届けします</p>
         </div>
 
         <!-- 忍者広告（動画下） -->
@@ -375,49 +455,44 @@
             <script src="https://adm.shinobi.jp/s/61eec53b4edb9b41cfb486042ed23d8d"></script>
             <!-- admax -->
         </div>
-    </main>
+    </div>
 
-    <!-- 広告オーバーレイ（プリロール） -->
-    <div class="ad-overlay" id="adOverlay">
-        <div class="ad-content">
-            <button class="ad-close" id="adClose">&times;</button>
-            <div class="ad-timer" id="adTimer">広告 5秒後にスキップできます</div>
-            <h3>スポンサー広告</h3>
-            <div class="ninja-ad">
-                <!-- admax -->
-                <script src="https://adm.shinobi.jp/s/61eec53b4edb9b41cfb486042ed23d8d"></script>
-                <!-- admax -->
-            </div>
-            <button id="skipAd" style="display: none; background: #4CAF50; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 10px;">スキップして動画を再生</button>
-        </div>
+    <!-- 動画プレイヤー -->
+    <div class="video-player" id="videoPlayer">
+        <video controls id="mainVideo">
+            <source src="" type="video/mp4">
+            お使いのブラウザは動画再生に対応していません。
+        </video>
     </div>
 
     <script>
         // 実際にアップロードされた動画のリスト
         const videoFiles = [
-            { id: 'sample', src: 'videos/sample.mp4', title: 'Sample Video - 検証用動画' }
+            { 
+                id: 'sample', 
+                src: 'videos/sample.mp4', 
+                title: 'Sample Video - 検証用サンプル動画',
+                uploadDate: '2024.08.11'
+            }
         ];
         
         const videos = {};
         
-        // 動画ファイルの存在確認と動的読み込み
+        // 動画ファイルの読み込み
         function loadVideos() {
-            // sample.mp4が存在することが確認されているため直接追加
             videoFiles.forEach(video => {
                 videos[video.id] = video;
             });
-            
-            // 存在する動画を表示
             updateVideoDisplay();
         }
-        
+
         function updateVideoDisplay() {
-            const videoGrid = document.querySelector('.video-grid');
-            videoGrid.innerHTML = '';
+            const videoList = document.getElementById('videoList');
+            videoList.innerHTML = '';
             
             if (Object.keys(videos).length === 0) {
-                videoGrid.innerHTML = `
-                    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">
+                videoList.innerHTML = `
+                    <div class="loading">
                         <h3>動画ファイルがまだアップロードされていません</h3>
                         <p>videos/フォルダに動画ファイルを追加してください</p>
                         <small>対応形式: MP4, WebM (推奨サイズ: 10MB以下)</small>
@@ -428,75 +503,79 @@
             
             Object.keys(videos).forEach(videoId => {
                 const video = videos[videoId];
-                const videoCard = createVideoCard(videoId, video);
-                videoGrid.appendChild(videoCard);
+                const videoItem = createVideoItem(videoId, video);
+                videoList.appendChild(videoItem);
             });
         }
         
-        function createVideoCard(videoId, video) {
-            const card = document.createElement('div');
-            card.className = 'video-card';
-            card.innerHTML = `
-                <div class="video-thumbnail" onclick="playVideo('${videoId}')">
-                    <div class="play-button">▶</div>
-                    <video style="width: 100%; height: 180px; object-fit: cover;" muted preload="metadata">
+        function createVideoItem(videoId, video) {
+            const item = document.createElement('div');
+            item.className = 'video-item';
+            item.onclick = () => playVideo(videoId);
+            
+            item.innerHTML = `
+                <div class="video-thumbnail">
+                    <video muted preload="metadata">
                         <source src="${video.src}" type="video/mp4">
                     </video>
+                    <div class="placeholder">
+                        <div>動画サムネイル<br><small>クリックで再生</small></div>
+                    </div>
+                    <div class="play-overlay">
+                        <div class="play-button">▶</div>
+                    </div>
                 </div>
                 <div class="video-info">
-                    <h3 class="video-title">${video.title}</h3>
+                    <h4 class="video-title">${video.title}</h4>
                     <div class="video-meta">
-                        <span>${new Date().toLocaleDateString('ja-JP')}</span>
+                        <span>${video.uploadDate}</span>
+                        <span class="separator">|</span>
                         <span id="duration-${videoId}">読み込み中...</span>
                     </div>
-                    <button class="view-button" onclick="playVideo('${videoId}')">再生</button>
+                    <button class="view-button" onclick="event.stopPropagation(); playVideo('${videoId}')">
+                        <svg class="view-button-icon" viewBox="0 0 13 12" fill="currentColor">
+                            <path d="M9.68465 4.70931L4.86227 1.8197C3.85586 1.21666 2.57617 1.94169 2.57617 3.11498V8.89419C2.57617 10.0675 3.85586 10.7925 4.86227 10.1895L9.68465 7.29986C10.6632 6.71345 10.6632 5.2956 9.68465 4.70931Z"/>
+                        </svg>
+                        View
+                    </button>
                 </div>
             `;
             
             // 動画の長さを取得
-            const videoElement = card.querySelector('video');
+            const videoElement = item.querySelector('video');
+            const placeholder = item.querySelector('.placeholder');
+            
             videoElement.addEventListener('loadedmetadata', function() {
                 const duration = Math.floor(this.duration);
                 const minutes = Math.floor(duration / 60);
                 const seconds = duration % 60;
                 const durationText = `${minutes}:${seconds.toString().padStart(2, '0')}`;
                 document.getElementById(`duration-${videoId}`).textContent = durationText;
+                
+                // サムネイル表示
+                placeholder.style.display = 'none';
+                this.style.display = 'block';
             });
             
-            // エラーハンドリング
             videoElement.addEventListener('error', function() {
                 document.getElementById(`duration-${videoId}`).textContent = '再生時間不明';
+                placeholder.innerHTML = '<div>サムネイル<br><small>生成中...</small></div>';
             });
             
-            return card;
+            return item;
         }
-
-        // 検索機能
-        const searchInput = document.querySelector('.search-bar input');
-        searchInput.addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            const videoCards = document.querySelectorAll('.video-card');
-            
-            videoCards.forEach(card => {
-                const title = card.querySelector('.video-title').textContent.toLowerCase();
-                if (title.includes(searchTerm)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        });
 
         // 広告システム（確率ベース）
         const adProbability = 0.7; // 70%の確率で広告表示
         let currentVideoId = '';
 
-        // 広告サイトのリスト
+        // 広告サイトのリスト（収益化用）
         const adSites = [
-            'https://example.com',
-            'https://google.com',
-            'https://yahoo.co.jp',
-            // 実際の広告パートナーサイトに変更してください
+            'https://www.amazon.co.jp/',
+            'https://www.rakuten.co.jp/',
+            'https://shopping.yahoo.co.jp/',
+            'https://www.dmm.com/',
+            'https://www.bookoff.co.jp/',
         ];
 
         function playVideo(videoId) {
@@ -506,19 +585,14 @@
             if (Math.random() < adProbability) {
                 showAdPage();
             } else {
-                // 広告なしで直接再生
                 playVideoDirectly();
             }
         }
 
         function showAdPage() {
-            // ランダムに広告サイトを選択
             const randomAdSite = adSites[Math.floor(Math.random() * adSites.length)];
-            
-            // 新しいタブで広告サイトを開く
             window.open(randomAdSite, '_blank');
             
-            // 少し遅れて動画再生を開始
             setTimeout(() => {
                 playVideoDirectly();
             }, 1000);
@@ -533,7 +607,6 @@
                 video.src = videoData.src;
                 player.style.display = 'block';
                 
-                // エラーハンドリング
                 video.onerror = function() {
                     alert(`${videoData.title}を再生します`);
                     player.style.display = 'none';
@@ -543,24 +616,27 @@
                     console.log('動画の自動再生がブロックされました');
                 });
                 
-                // プレイヤーまでスクロール
                 player.scrollIntoView({ behavior: 'smooth' });
             }
         }
 
-        // フィルター機能
-        const filterSelects = document.querySelectorAll('.filter-select');
-        filterSelects.forEach(select => {
-            select.addEventListener('change', function() {
-                console.log('フィルター変更:', this.value);
-                // 実際のフィルタリング処理をここに追加
-            });
-        });
-
         // ページ読み込み時に動画ファイルを読み込み
         document.addEventListener('DOMContentLoaded', function() {
             loadVideos();
-            console.log('VideoShare検証版が読み込まれました - sample.mp4を検出');
+            console.log('素人自撮り動画サイトが読み込まれました');
+        });
+
+        // パフォーマンス最適化
+        document.addEventListener('mouseover', function(e) {
+            if (e.target.closest('.video-item')) {
+                e.target.closest('.video-item').style.willChange = 'transform';
+            }
+        });
+
+        document.addEventListener('mouseout', function(e) {
+            if (e.target.closest('.video-item')) {
+                e.target.closest('.video-item').style.willChange = 'auto';
+            }
         });
     </script>
 </body>
