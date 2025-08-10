@@ -654,19 +654,19 @@
         const demoVideos = [
             { 
                 id: 'demo1', 
-                title: 'デモ動画1 - 美しい風景',
+                title: 'demo1',
                 uploadDate: '2025.08.11',
                 duration: '2:30'
             },
             { 
                 id: 'demo2', 
-                title: 'デモ動画2 - 楽しい時間',
+                title: 'demo2',
                 uploadDate: '2025.08.10',
                 duration: '3:15'
             },
             { 
                 id: 'demo3', 
-                title: 'デモ動画3 - 素敵な瞬間',
+                title: 'demo3',
                 uploadDate: '2025.08.09',
                 duration: '1:45'
             }
@@ -679,13 +679,13 @@
                 { 
                     id: 'sample', 
                     src: 'videos/sample.mp4', 
-                    title: 'Sample Video - 検証用サンプル動画',
+                    title: 'sample',
                     uploadDate: '2025.08.11'
                 },
                 { 
                     id: 'sample2', 
                     src: 'videos/sample2.mp4', 
-                    title: 'Sample Video 2 - 検証用サンプル動画2',
+                    title: 'sample2',
                     uploadDate: '2025.08.11'
                 }
             ];
@@ -737,7 +737,7 @@
                         additionalVideos.push({
                             id: `auto_${videoIndex}`,
                             src: `videos/${filename}`,
-                            title: `${filename.replace('.mp4', '')} - 自動検出動画`,
+                            title: filename.replace('.mp4', ''),
                             uploadDate: new Date().toLocaleDateString('ja-JP', {
                                 year: 'numeric',
                                 month: '2-digit', 
