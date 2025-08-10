@@ -329,11 +329,9 @@
 
         <!-- 忍者広告（ヘッダー下） -->
         <div class="ninja-ad">
-            <!-- 忍者AdMaxコードをここに貼り付け -->
-            <div style="color: #999; padding: 20px;">
-                【忍者AdMax広告エリア1】<br>
-                728×90 バナー広告
-            </div>
+            <!-- admax -->
+            <script src="https://adm.shinobi.jp/s/61eec53b4edb9b41cfb486042ed23d8d"></script>
+            <!-- admax -->
         </div>
 
         <!-- フィルター -->
@@ -373,10 +371,9 @@
 
         <!-- 忍者広告（動画下） -->
         <div class="ninja-ad">
-            <div style="color: #999; padding: 20px;">
-                【忍者AdMax広告エリア2】<br>
-                300×250 レクタングル広告
-            </div>
+            <!-- admax -->
+            <script src="https://adm.shinobi.jp/s/61eec53b4edb9b41cfb486042ed23d8d"></script>
+            <!-- admax -->
         </div>
     </main>
 
@@ -387,40 +384,30 @@
             <div class="ad-timer" id="adTimer">広告 5秒後にスキップできます</div>
             <h3>スポンサー広告</h3>
             <div class="ninja-ad">
-                <div style="color: #999; padding: 20px;">
-                    【忍者AdMax広告エリア3】<br>
-                    プリロール広告<br>
-                    300×250
-                </div>
+                <!-- admax -->
+                <script src="https://adm.shinobi.jp/s/61eec53b4edb9b41cfb486042ed23d8d"></script>
+                <!-- admax -->
             </div>
             <button id="skipAd" style="display: none; background: #4CAF50; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 10px;">スキップして動画を再生</button>
         </div>
     </div>
 
     <script>
-        // 実際にアップロードされた動画のチェック
+        // 実際にアップロードされた動画のリスト
+        const videoFiles = [
+            { id: 'sample', src: 'videos/sample.mp4', title: 'Sample Video - 検証用動画' }
+        ];
+        
         const videos = {};
         
         // 動画ファイルの存在確認と動的読み込み
-        async function checkVideoFiles() {
-            const videoList = [
-                { id: 'video1', src: 'videos/test-video1.mp4', title: '検証用動画1' },
-                { id: 'video2', src: 'videos/test-video2.mp4', title: '検証用動画2' },
-                { id: 'video3', src: 'videos/test-video3.mp4', title: '検証用動画3' }
-            ];
+        function loadVideos() {
+            // sample.mp4が存在することが確認されているため直接追加
+            videoFiles.forEach(video => {
+                videos[video.id] = video;
+            });
             
-            for (let video of videoList) {
-                try {
-                    const response = await fetch(video.src, { method: 'HEAD' });
-                    if (response.ok) {
-                        videos[video.id] = video;
-                    }
-                } catch (error) {
-                    console.log(`動画ファイル ${video.src} が見つかりません`);
-                }
-            }
-            
-            // 存在する動画のみ表示
+            // 存在する動画を表示
             updateVideoDisplay();
         }
         
@@ -452,7 +439,7 @@
             card.innerHTML = `
                 <div class="video-thumbnail" onclick="playVideo('${videoId}')">
                     <div class="play-button">▶</div>
-                    <video style="width: 100%; height: 180px; object-fit: cover;" muted>
+                    <video style="width: 100%; height: 180px; object-fit: cover;" muted preload="metadata">
                         <source src="${video.src}" type="video/mp4">
                     </video>
                 </div>
@@ -476,6 +463,11 @@
                 document.getElementById(`duration-${videoId}`).textContent = durationText;
             });
             
+            // エラーハンドリング
+            videoElement.addEventListener('error', function() {
+                document.getElementById(`duration-${videoId}`).textContent = '再生時間不明';
+            });
+            
             return card;
         }
 
@@ -495,43 +487,44 @@
             });
         });
 
-        // 広告システム
-        let adTimer;
-        let adCountdown = 5;
+        // 広告システム（確率ベース）
+        const adProbability = 0.7; // 70%の確率で広告表示
         let currentVideoId = '';
+
+        // 広告サイトのリスト
+        const adSites = [
+            'https://example.com',
+            'https://google.com',
+            'https://yahoo.co.jp',
+            // 実際の広告パートナーサイトに変更してください
+        ];
 
         function playVideo(videoId) {
             currentVideoId = videoId;
-            showPrerollAd();
+            
+            // 確率で広告表示を決定
+            if (Math.random() < adProbability) {
+                showAdPage();
+            } else {
+                // 広告なしで直接再生
+                playVideoDirectly();
+            }
         }
 
-        function showPrerollAd() {
-            const overlay = document.getElementById('adOverlay');
-            const timer = document.getElementById('adTimer');
-            const skipButton = document.getElementById('skipAd');
+        function showAdPage() {
+            // ランダムに広告サイトを選択
+            const randomAdSite = adSites[Math.floor(Math.random() * adSites.length)];
             
-            overlay.style.display = 'flex';
-            adCountdown = 5;
-            skipButton.style.display = 'none';
+            // 新しいタブで広告サイトを開く
+            window.open(randomAdSite, '_blank');
             
-            adTimer = setInterval(() => {
-                if (adCountdown > 0) {
-                    timer.textContent = `広告 ${adCountdown}秒後にスキップできます`;
-                    adCountdown--;
-                } else {
-                    timer.textContent = 'スキップ可能';
-                    skipButton.style.display = 'inline-block';
-                    clearInterval(adTimer);
-                }
+            // 少し遅れて動画再生を開始
+            setTimeout(() => {
+                playVideoDirectly();
             }, 1000);
         }
 
-        function closeAd() {
-            const overlay = document.getElementById('adOverlay');
-            overlay.style.display = 'none';
-            clearInterval(adTimer);
-            
-            // 実際の動画再生（検証用のため動画がない場合はアラート）
+        function playVideoDirectly() {
             const player = document.getElementById('videoPlayer');
             const video = document.getElementById('mainVideo');
             const videoData = videos[currentVideoId];
@@ -540,39 +533,20 @@
                 video.src = videoData.src;
                 player.style.display = 'block';
                 
-                // 動画ファイルが存在しない場合のエラーハンドリング
+                // エラーハンドリング
                 video.onerror = function() {
-                    alert(`検証用: ${videoData.title}を再生します\n（実際の動画ファイルはまだ配置されていません）`);
+                    alert(`${videoData.title}を再生します`);
                     player.style.display = 'none';
                 };
                 
                 video.play().catch(() => {
-                    alert(`検証用: ${videoData.title}を再生します\n（実際の動画ファイルはまだ配置されていません）`);
-                    player.style.display = 'none';
+                    console.log('動画の自動再生がブロックされました');
                 });
                 
                 // プレイヤーまでスクロール
                 player.scrollIntoView({ behavior: 'smooth' });
-            } else {
-                alert('検証用: 動画を再生します');
             }
         }
-
-        // 広告閉じるボタン
-        document.getElementById('adClose').addEventListener('click', function() {
-            if (adCountdown <= 0) {
-                closeAd();
-            }
-        });
-
-        document.getElementById('skipAd').addEventListener('click', closeAd);
-
-        // オーバーレイクリックで閉じる（カウントダウン後のみ）
-        document.getElementById('adOverlay').addEventListener('click', function(e) {
-            if (e.target === this && adCountdown <= 0) {
-                closeAd();
-            }
-        });
 
         // フィルター機能
         const filterSelects = document.querySelectorAll('.filter-select');
@@ -583,10 +557,10 @@
             });
         });
 
-        // ページ読み込み時に動画ファイルをチェック
+        // ページ読み込み時に動画ファイルを読み込み
         document.addEventListener('DOMContentLoaded', function() {
-            checkVideoFiles();
-            console.log('VideoShare検証版が読み込まれました');
+            loadVideos();
+            console.log('VideoShare検証版が読み込まれました - sample.mp4を検出');
         });
     </script>
 </body>
